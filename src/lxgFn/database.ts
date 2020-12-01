@@ -15,6 +15,7 @@ export default class dataBase {
                 break
             case "Object":
                 this.val = [this.val]
+                break
             case "Array":
                 this.chainAble = true
                 break
@@ -25,40 +26,40 @@ export default class dataBase {
         }
     }
 
-    table:string = ''
+    private table:string = ''
 
-    val:string | number | boolean | any [ ] | object | null | undefined  = ''
+    private val:string | number | boolean | any [ ] | object | null | undefined  = ''
 
-    response:string|object|any [] = ''
+    private response:string|object|any [] = ''
 
-    chainAble = false
+    private chainAble = false
 
-    statusObj:dbStatus = {
+    private statusObj:dbStatus = {
         status: ''
     }
 
 
     /*
-    * 进程队列里面存放了 被 bind 的还未执行的函数 , 因为sql语句这种
-    * 比如 我们 SELECT price,pname FROM "xxx" WHERE price < 20
-    * 如果我们想要输入函数得到执行结果
-    * db.select("price","pname").from("xxx").where("price",p => p < 20).val()
-    * 就得控制好执行顺序,因为它绝对不能只是按照写时候的先后顺序来执行
-    *   先要 设置 from  (在哪个数据表 ? ) , 没有数据表,肯定没法执行, 因此要先执行选表的操作
-    *   然后设置查询的限制  where ( 限制条件有哪些 ? )
-    *   根据where的条件我们可以得到数据
-    *   最后再选择我们需要的字段 select , 进行过滤 , 只返回我们需要的字段
-    * 因此函数虽然写的时候是按照顺序写的,但是真正执行的时候绝对不能按照顺序执行,否则不能正常得到执行结果,所以需要一个延迟执行的机制.
-    * 会有进程队列收集你要做的事情,等待参数收集完毕了,才会真正地进行执行
+    *  进程队列里面存放了 被 bind 的还未执行的函数 , 因为sql语句这种
+    *  比如 我们 SELECT price, pname FROM "xxx" WHERE price < 20
+    *  如果我们想要输入函数得到执行结果
+    *  db.select("price","pname").from("xxx").where("price",p => p < 20).val()
+    *  就得控制好执行顺序,因为它绝对不能只是按照写时候的先后顺序来执行
+    *    先要 设置 from  (在哪个数据表 ? ) , 没有数据表,肯定没法执行, 因此要先执行选表的操作
+    *    然后设置查询的限制  where ( 限制条件有哪些 ? )
+    *    根据where的条件我们可以得到数据
+    *    最后再选择我们需要的字段 select , 进行过滤 , 只返回我们需要的字段
+    *  因此函数虽然写的时候是按照顺序写的,但是真正执行的时候绝对不能按照顺序执行,否则不能正常得到执行结果,所以需要一个延迟执行的机制.
+    *  会有进程队列收集你要做的事情,等待参数收集完毕了,才会真正地进行执行
     * */
-    progress: Array<(args?:any)=>any> = []
+    private progress: Array<(args?:any)=>any> = []
 
-    value(){
+    private value(){
         this.progress.forEach(func => func())
         return this.val
     }
 
-    getTableInfo(table:string){
+    private getTableInfo(table:string){
         // 根据表名查询字段
         let temp = localStorage.getItem(table)
         try{
@@ -68,7 +69,7 @@ export default class dataBase {
         }
     }
 
-    typeOf(target:any){
+    private typeOf(target:any){
         // 检测目标的类型, 返回一个表示类型的字符串
         return Object.prototype
             .toString.call(target)
@@ -82,7 +83,7 @@ export default class dataBase {
         this.progress.push(this.executeSelect.bind(this,args))
     }
 
-    executeSelect(...args : Array <any>){
+    private executeSelect(...args : Array <any>){
         // 如果不满足条件不能使用select函数
         if(!this.chainAble) return
         this.statusObj.status = "select"
@@ -99,12 +100,21 @@ export default class dataBase {
         this.progress.push(this.setWhere.bind(this,field,handle))
     }
 
-    setWhere(field:string,handle:(field?:any)=>{}){
+    private setWhere(field:string,handle:(field?:any)=>{}){
         let res:object [] = [];
         switch (this.statusObj.status){
             case "select":
                 // 如果当前的操作是 "查"
                 (this.val as Array<object>).map(item => handle(field) && res.push(item))
+                break
+            case "delete":
+                // 如果选择的操作是 "删"
+                break
+            case "update":
+                // 如果选择的操作是 "改"
+                break
+            case "insert":
+                // 如果选择的是 "增"
                 break
         }
     }
@@ -113,7 +123,7 @@ export default class dataBase {
         this.progress.push(this.setFrom.bind(this,table))
     }
 
-    setFrom(table:string){
+    private setFrom(table:string){
         this.table = table
     }
 
@@ -121,8 +131,9 @@ export default class dataBase {
         this.progress.push(this.executeSelect.bind(this,table,data))
     }
 
-    executeInsert(table:string,data:object|string|number){
+    private executeInsert(table:string,data:object|string|number){
         this.setFrom(table)
+        this.statusObj.status = "insert"
         /*
          * 未完成,还需要后续补充插入数据的逻辑
          * */
@@ -132,7 +143,8 @@ export default class dataBase {
         this.progress.push(this.executeRemove.bind(this))
     }
 
-    executeRemove(){
+    private executeRemove(){
+        this.statusObj.status = "delete"
         /*
         *  to do
         * */
@@ -142,10 +154,13 @@ export default class dataBase {
         this.progress.push(this.executeUpdate.bind(this,field))
     }
 
-    executeUpdate(field:string){
+    private executeUpdate(field:string){
+        this.statusObj.status = "update"
         /*
         * to do
         * */
     }
 }
+
+
 

@@ -1,5 +1,5 @@
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonPage } from '@ionic/react';
-import React, { useRef } from 'react';
+import React from 'react';
 import './Home.css';
 
 interface card {
@@ -9,7 +9,8 @@ interface card {
 interface dataMsg {
   desc ?: string,
   title ?: string,
-  content ?: string
+  content ?: string,
+  url ?: string
 }
 
 const url: string = require("../../images/banner.png")
@@ -17,10 +18,11 @@ console.log(React as any)
 
 const Home:React.FC<card> = (props:any) => {
   const { msg } = props
+  console.log(msg)
   return (
     <IonPage>
       <IonCard>
-        <img src={url} alt="" />
+        <img src={ msg ? msg.url : ""} alt="" />
         <IonCardHeader class="ion-inherit-color ios hydrated">
 
           <IonCardSubtitle
