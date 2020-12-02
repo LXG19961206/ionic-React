@@ -1,10 +1,11 @@
 import React from 'react';
+import axios from 'axios';
+
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/home/Home';
 import Index from './pages/index/index';
-
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -24,7 +25,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-
+((React.Component.prototype) as any)['axios'] = axios
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
