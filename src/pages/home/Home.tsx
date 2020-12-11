@@ -32,8 +32,8 @@ const Home:React.FC<card> = (props:any) => {
           </IonCardSubtitle>
 
           <IonCardTitle
-            role="heading"
-            class="ion-inherit-color ios hydrated">
+            role = "heading"
+            class = "ion-inherit-color ios hydrated">
             { msg ? msg.title : "组件未传值"}
           </IonCardTitle>
 

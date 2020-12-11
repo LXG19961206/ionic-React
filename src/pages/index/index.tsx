@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Form,FunForm } from "../ref/ref"
 
 const axios = require('axios')
 type axiosResponse = string | number | object | null | undefined 
@@ -6,18 +7,18 @@ type axiosResponse = string | number | object | null | undefined
 function TestComp(props:any){
   const [name,setName] = useState("TOM")
   let list = [name]
-  const handleClick = () => {
-    setName(name + "Y") 
-  }
+  const handleClick = () => setName(name + "Y") 
   useEffect(()=>{
-    const cb = (content:string) => console.log('旧的name是%?',content)
+    const cb = (content:string) => console.log('旧的name是%s?',content)
     axios.get('/').then((res:axiosResponse)=> console.log(res))
     return cb.bind(null,name)
-  },[])
+  },[name])
+  
   return (
-    <div onClick = {handleClick}>
+    <div>
       hello,{ name }
-    </div>)
+    </div>
+  )
 }
 
 
@@ -26,9 +27,14 @@ class Demo extends React.Component<msg> {
     super(props)
     console.log(props)
   }
+
+  handle = () => {
+    alert(1)
+  }
+
   render() {
     return (
-      <div onClick = { ()=> axios.get('/').then((res: axiosResponse) => console.log(res)) }>
+      <div onClick = { this.handle.bind(this)}>
         hello, { this.props.name }
       </div>
     )
@@ -43,10 +49,14 @@ class Outer extends React.Component <outer> {
     super(props)
   }
   handleClick(){
+    console.log(this.refs.demo)
   }
   render(){
+    const obj = {
+      onClick: this.handleClick.bind(this)
+    }
     return (
-      <div>
+      <div {...obj}>
         <Demo ref="demo"/>
       </div>
     )
@@ -76,8 +86,7 @@ function FnComp(props: typeFn) {
     <div
       onClick = {() => { setCount(() => count + 1) ; }} >
       { name } : { count }
-      <Demo 
-        ref = {demoRef}/>
+      <Demo ref = {demoRef}/>
     </div>
   )
 }
@@ -142,7 +151,8 @@ function Demo02 () {
       setRes(res as string + String(new Date()))
     })
   }
-  useEffect(()=>{
+
+  useEffect(() => {
     isLoad && console.log("遮罩层")  
   },[isLoad])
 
@@ -154,15 +164,106 @@ function Demo02 () {
 
   return (
     <div>
-      <button onClick = { handleClick }>发请求</button>
+      <button onClick = { handleClick } >发请求</button>
     </div>
   )
+}
+
+function Demo3(){
+  const [name,setName] = useState('tom')
+  const [count,setCount] = useState(1)
+  function init(){
+    return function onClick(e:Event){
+      console.log(e)
+    } 
+  }
+  return ( <div {...init()}> { name } : { count } </div> )
+}
+
+class Life extends React.Component {
+  static defaultProps =  {
+
+  }
+
+  constructor(props:any){
+    super(props)
+    console.log('1.Counter, constructor构造函数')
+  }
+  state = {
+    number: 0
+  }
+  UNSAFE_componentWillMount(){
+    console.log('2.Counter, 组件将要挂载')
+  }
+
+  render(){
+    console.log('3.Counrer, 组件渲染')
+    return (<div>
+      { this.state.number }
+      <button onClick = { this.handleClick.bind(this) }>click me ! </button>
+      <hr/>
+      {
+        this.state.number < 10 && <SubLife count = {this.state.number }/>
+      }
+    </div>)
+  }
+
+  handleClick(){
+    this.setState({number : this.state.number + 1},()=>{
+      console.log(this.state.number)
+    })
+  }
+
+  componentDidMount(){
+    console.log('4.Counter, 组件挂载完成')
+  }
+
+  shouldComponentUpdate(nextProps:any,nextState:any){
+    console.log('5.询问用户组件是否要重新渲染')
+    // 这里可以写一些条件 , 只有 return true 的时候才会去更新页面
+    return nextState.number % 2 == 0 
+  }
+
+  UNSAFE_componentWillUpdate(){
+    console.log('6.Counter 组件将要更新')
+  }
+
+  componentDidUpdate(){
+    console.log('7.Counter 组件更新完成')
+  }
+
+}
+type childLife = {
+  count?: number
+}
+class SubLife extends React.Component <childLife> {
+  constructor(props:childLife){
+    super(props)
+    this.state.count = this.props.count
+  }
+  state: { count?:number } = {}
+  static getDerivedStateFromProps(nextProps:childLife, lastState:any){
+    console.log(nextProps.count, '进行了更新')
+    return { count : nextProps.count! + 1 }
+  }
+  getSnapshotBeforeUpdate(prevProps:childLife, prevState:any) {
+    return "我要更新了"
+  }
+  componentDidUpdate(props:childLife,state:any, snap:any){
+    console.log('从上个钩子里获取' + snap)
+  }
+  render(){
+    console.log("9.Counter 子组件渲染")
+    return (<div>
+        父组件传来的值是 {this.state.count}
+    </div>)
+  }
 }
 
 const EL: React.FC = () => {
   return (
     <div>
-      <Demo02 />
+      <Life />
     </div>
   )
 }
