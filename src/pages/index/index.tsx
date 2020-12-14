@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form,FunForm } from "../ref/ref"
+import { Position,Parent } from "../review/index"
 
 const axios = require('axios')
 type axiosResponse = string | number | object | null | undefined 
@@ -263,7 +263,8 @@ class SubLife extends React.Component <childLife> {
 const EL: React.FC = () => {
   return (
     <div>
-      <Life />
+      <Position/>
+      <Parent/>
     </div>
   )
 }

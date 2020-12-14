@@ -52,7 +52,7 @@ class TextInput extends React.Component {
 }
 // use forwardRef
 const MyInput = React.forwardRef((props,ref)=>{
-  return (<input  ref={ref as any} />)
+  return (<input  ref = { ref as any } />)
 })
 
 export function FunForm(props:any){
@@ -61,7 +61,7 @@ export function FunForm(props:any){
   <div>
     <MyInput
       ref = {ref as any}/>
-    <button onClick = {()=>{console.log(ref)}}>click</button>
+    <button onClick = { () => console.log(ref) }> click </button>
   </div>
   )
 }
