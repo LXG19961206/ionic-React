@@ -10,10 +10,11 @@ export function Position () {
   const pos:posMsg = usePosition()
   return (
     <div>
-      定位:{`x:${pos.x},y:${pos.y}`}
+      定位 : {`x:${pos.x},y:${pos.y}`}
     </div>
   )
 }
+
 
 function usePosition(){
   const [ pos, setPos ] = useState({x:0,y:0})
@@ -26,16 +27,20 @@ function usePosition(){
 }
 function SonI(){
   const {num} = useContext(MyContext)
-  return (<div>
+  return (
+    <div>
       数量 : {num}
-  </div>)
+    </div>
+  )
 }
 
 function SonII(){
   const {num} = useContext(MyContext)
-  return (<div>
-      数量 : {num}
-  </div>)
+  return (
+    <div>
+        数量 : {num}
+    </div>
+  )
 }
 export function Parent(){
   const [ num , setNum ] = useState(0)

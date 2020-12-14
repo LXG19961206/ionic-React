@@ -261,6 +261,7 @@ class SubLife extends React.Component <childLife> {
 }
 
 const EL: React.FC = () => {
+  axios.get('/cityjson').then((res: any) => console.log(res))
   return (
     <div>
       <Position/>
