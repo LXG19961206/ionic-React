@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Position,Parent } from "../review/index"
+import { createStore } from 'redux';
 
 const axios = require('axios')
+console.log(createStore)
 type axiosResponse = string | number | object | null | undefined 
 
 function TestComp(props:any){
@@ -241,17 +243,22 @@ class SubLife extends React.Component <childLife> {
     super(props)
     this.state.count = this.props.count
   }
+
   state: { count?:number } = {}
+
   static getDerivedStateFromProps(nextProps:childLife, lastState:any){
     console.log(nextProps.count, '进行了更新')
     return { count : nextProps.count! + 1 }
   }
+
   getSnapshotBeforeUpdate(prevProps:childLife, prevState:any) {
     return "我要更新了"
   }
+
   componentDidUpdate(props:childLife,state:any, snap:any){
     console.log('从上个钩子里获取' + snap)
   }
+
   render(){
     console.log("9.Counter 子组件渲染")
     return (<div>
@@ -265,6 +272,7 @@ const EL: React.FC = () => {
   return (
     <div>
       <Position/>
+      <Parent/>
       <Parent/>
     </div>
   )
