@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Position,Parent } from "../review/index"
+import { Form,FunForm } from "../ref/ref"
 
 
 
@@ -266,8 +266,7 @@ const EL: React.FC = () => {
   axios.get('/cityjson').then((res: any) => console.log(res.data))
   return (
     <div>
-      <Position/>
-      <Parent/>
+      <Life />
     </div>
   )
 }
