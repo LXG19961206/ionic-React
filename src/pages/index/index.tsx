@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Position,Parent } from "../review/index"
 import { createStore } from 'redux';
+import { sessionDB } from '../../lxgFn/sessionDB'
+const session = new sessionDB()  
+
+session.setItem('msg',{a:1,b:3})
 
 const axios = require('axios')
 console.log(createStore)
@@ -10,7 +14,7 @@ function TestComp(props:any){
   const [name,setName] = useState("TOM")
   let list = [name]
   const handleClick = () => setName(name + "Y") 
-  useEffect(()=>{
+  useEffect(() => {
     const cb = (content:string) => console.log('旧的name是%s?',content)
     axios.get('/').then((res:axiosResponse)=> console.log(res))
     return cb.bind(null,name)
@@ -261,19 +265,18 @@ class SubLife extends React.Component <childLife> {
 
   render(){
     console.log("9.Counter 子组件渲染")
-    return (<div>
-        父组件传来的值是 {this.state.count}
-    </div>)
+    return (
+      <div>
+          父组件传来的值是 { this.state.count }
+      </div>
+    )
   }
 }
 
 const EL: React.FC = () => {
-  axios.get('/cityjson').then((res: any) => console.log(res.data))
+  fetch('/cityjson').then((res: any) => console.log(res + '123'))
   return (
     <div>
-      <Position/>
-      <Parent/>
-      <Parent/>
     </div>
   )
 }

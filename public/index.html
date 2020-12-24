@@ -33,19 +33,20 @@
   </body>
   <script>
     "use strict"
+    // toOrigin 可以把 “被包装为 ‘对象类型’ 的 ‘基本类型’”转为普通的基本类型
     const toOrigin = target => target.constructor.name === 'String' ? eval(`${target.constructor.name}('${target}')`) : eval(`${target.constructor.name}(${target})`)
     // 但是这里得考虑严格模式的问题 , 严格模式的 this 并不默认指向 window
-    Object.prototype.log = function(...arg){
-      // 如果通过参数的方式传入了参数 , 直接进行调用即可
+    Object.prototype.log = function(...arg) {
+      // 如果通过参数的方式调用了函数 , 直接进行调用即可
       (this === window || this === undefined) && arg && console.log.call(window,...arg.map(item => toOrigin(item)))
       // 如果通过 '.' 的方式进行访问 , 并且没有传入参数 , 打印 this 即可
       this && this !== window && arg.length === 0 && console.log.call(this,toOrigin(this))
       // 如果通过 '.' 的方式 , 并且传入了参数, 合并参数后打印
       this && this !== window && arg.length > 0 && console.log.call(this,...[this,...arg].map(item => toOrigin(item)))
       // 最后将打印的参数返回
-      return ( this === window || !this )&& arg.length > 0 ? ( arg.length === 1 ? toOrigin(arg[0]) : toOrigin(arg) ) : this && this !== window && arg.length === 0 ? toOrigin(this) : this && this !== window && arg.length > 0 ? toOrigin([this,...arg]) : null
+      return ( this === window || this === undefined ) && arg.length > 0 ? ( arg.length === 1 ? toOrigin(arg[0]) : toOrigin(arg) ) : this && this !== window && arg.length === 0 ? toOrigin(this) : this && this !== window && arg.length > 0 ? toOrigin([this,...arg]) : null
     }
-    // 阻止通过遍历拿到 log 
+    // 设置访问器属性 , 阻止通过遍历拿到 log 
     Object.defineProperty(Object.prototype, 'log' ,{
       enumerable: false,
       configurable: false,
