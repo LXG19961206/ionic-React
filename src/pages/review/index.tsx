@@ -1,13 +1,7 @@
-import React, { useState, useEffect, useRef , useContext, useReducer, createContext } from 'react';
+import React, { useState, useEffect, useRef , useContext } from 'react';
 import { Form,FunForm } from "../ref/ref"
 import { MyContext } from '../review/MyContext'
-import { createStore } from 'redux';
-import axios from 'axios';
-
-
-
-
-
+const axios = require('axios')
 type posMsg = {
   x: number ,
   y: number
@@ -32,34 +26,30 @@ function usePosition(){
   return pos
 }
 function SonI(){
-  const { num } = useContext(MyContext)
+  const {num} = useContext(MyContext)
   return (
     <div>
-      数量 : { num }
+      数量 : {num}
     </div>
   )
 }
 
 function SonII(){
-  const { num } = useContext(MyContext)
+  const {num} = useContext(MyContext)
   return (
     <div>
-      数量 : { num }
+        数量 : {num}
     </div>
   )
 }
-
-const data = { num : 0 }
-
 export function Parent(){
-  const [ num ,setNum ] = useState(0)
+  const [ num , setNum ] = useState(0)
   return (
-    <MyContext.Provider value = {{ num }}>
-      <div>
-        <button onClick = { () => setNum(num + 1) }> 点击 </button>
-        <SonI/>
-        <SonII/>
-      </div>
+    <MyContext.Provider
+      value = {{ num }}>
+      <button onClick = {() => { setNum(num + 1) }}> use context </button>
+      <SonI/>
+      <SonII/>
     </MyContext.Provider>
   )
 }

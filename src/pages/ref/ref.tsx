@@ -47,7 +47,7 @@ class TextInput extends React.Component {
   }
 
   render(){
-    return (<input ref = { this.input as any }/>)
+    return (<input ref = {this.input as any}/>)
   }
 }
 // use forwardRef
