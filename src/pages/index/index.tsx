@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-
+import { Position,Parent } from "../review/index"
 
 const axios = require('axios')
 type axiosResponse = string | number | object | null | undefined 
@@ -265,7 +265,6 @@ const EL: React.FC = () => {
   return (
     <div>
       <Position/>
-      <Parent/>
       <Parent/>
     </div>
   )
