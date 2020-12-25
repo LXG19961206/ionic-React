@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form,FunForm } from "../ref/ref"
-
 
 
 const axios = require('axios')
@@ -266,7 +264,9 @@ const EL: React.FC = () => {
   axios.get('/cityjson').then((res: any) => console.log(res.data))
   return (
     <div>
-      <Life />
+      <Position/>
+      <Parent/>
+      <Parent/>
     </div>
   )
 }
